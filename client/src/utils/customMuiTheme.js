@@ -1,210 +1,67 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 import "@fontsource/poppins";
 
-const basePalette = {
-  primary: {
-    main: "#1976d2",
-    contrastText: "#ffffff",
-  },
-  secondary: {
-    main: "#9c27b0",
-    contrastText: "#ffffff",
-  },
-  error: {
-    main: "#f44336",
-  },
-  warning: {
-    main: "#ff9800",
-  },
-  info: {
-    main: "#2196f3",
-  },
-  success: {
-    main: "#4caf50",
-  },
-};
-
-export const getTheme = (mode = "light") => {
+export const getTheme = (mode = "dark") => {
   let theme = createTheme({
     palette: {
       mode,
-      ...basePalette,
-      ...(mode === "light"
-        ? {
-            background: {
-              default: "#f5f5f5",
-              paper: "#ffffff",
-            },
-          }
-        : {
-            background: {
-              default: "#121212",
-              paper: "#1e1e1e",
-            },
-          }),
+      ...(mode === "dark" && {
+        background: {
+          default: "#04070b", // main body background
+          paper: "#0d1117", // sidebar paper background
+        },
+        text: {
+          primary: "#ffffff", // default text
+          secondary: "#aeb0b3", // non-selected text
+        },
+        divider: "#333b4d", // borders
+      }),
     },
+
     // Typography
     typography: {
       fontFamily: "'Poppins', sans-serif",
-      h1: {
-        fontSize: "2.5rem",
-        fontWeight: 700,
-        color: mode === "light" ? "#000" : "#fff",
-      },
-      h2: {
-        fontSize: "1.5rem",
-        fontWeight: 600,
-        color: mode === "light" ? "#666" : "#aaa",
-      },
-      dashboardHeading: {
-        fontSize: "2rem",
-        fontWeight: 700,
-        color: mode === "light" ? "#000" : "#fff",
-      },
-      dashboardSubheading: {
-        fontSize: "1rem",
+      // Custom variant for sidebar menu text
+      sideMenu: {
+        fontSize: "0.875rem",
         fontWeight: 500,
-        color: mode === "light" ? "#666" : "#aaa",
+        lineHeight: 1.43,
       },
     },
+
+    // Component overrides
     components: {
-      MuiButton: {
-        defaultProps: {
-          variant: "outlined",
-        },
+      MuiListItem: {
         styleOverrides: {
           root: {
-            borderRadius: 8,
-            padding: "8px 16px",
-            textTransform: "none",
-          },
-        },
-      },
-      MuiOutlinedInput: {
-        styleOverrides: {
-          root: {
-            borderRadius: 8,
-          },
-        },
-      },
-      MuiSnackbar: {
-        defaultProps: {
-          autoHideDuration: 3000,
-          anchorOrigin: { vertical: "top", horizontal: "center" },
-        },
-      },
-      MuiAlert: {
-        styleOverrides: {
-          root: {
-            borderRadius: 8,
-          },
-          standardSuccess: {
-            backgroundColor: basePalette.success.main,
-            color: "#fff",
-          },
-          standardError: {
-            backgroundColor: basePalette.error.main,
-            color: "#fff",
-          },
-        },
-      },
-      MuiPaginationItem: {
-        styleOverrides: {
-          root: {
-            borderRadius: 8,
-            border: "1px solid #ddd",
             "&.Mui-selected": {
-              backgroundColor: basePalette.primary.main,
-              color: "#fff",
-              fontWeight: "bold",
+              color: "#ffffff",
+              backgroundColor: "rgb(74 78 86)",
               "&:hover": {
-                backgroundColor: "#1565c0",
+                backgroundColor: "rgb(74 78 86)",
               },
             },
+            "&:hover": {
+              backgroundColor: "#151923",
+            },
           },
         },
       },
-      MuiCard: {
+      MuiListItemIcon: {
         styleOverrides: {
           root: {
-            borderRadius: 10,
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-            overflow: "hidden",
-            transition: "transform 0.3s ease, box-shadow 0.3s ease",
-            "&:hover": {
-              boxShadow: "0 8px 30px rgba(0, 0, 0, 0.15)",
-            },
+            minWidth: "unset",
+            width: "1rem",
+            height: "1rem",
+            marginRight: "8px",
+            color: "#aeb0b3",
           },
         },
       },
       MuiPaper: {
         styleOverrides: {
           root: {
-            borderRadius: 6,
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-            overflow: "hidden",
-          },
-        },
-      },
-      MuiBreadcrumbs: {
-        defaultProps: {
-          separator: "›",
-        },
-        styleOverrides: {
-          separator: {
-            color: "#999",
-            fontSize: "0.8rem",
-          },
-        },
-      },
-      MuiPickersPopper: {
-        styleOverrides: {
-          paper: {
-            borderRadius: 8,
-          },
-        },
-      },
-      MuiCalendarPicker: {
-        styleOverrides: {
-          root: {
-            borderRadius: 8,
-          },
-        },
-      },
-      MuiTableContainer: {
-        styleOverrides: {
-          root: {
-            borderRadius: 6,
-          },
-        },
-      },
-      MuiTableHead: {
-        styleOverrides: {
-          root: {
-            "& th": {
-              color: "#fff",
-              fontWeight: "bold",
-              backgroundColor: basePalette.primary.main,
-            },
-          },
-        },
-      },
-      MuiTableRow: {
-        styleOverrides: {
-          root: {
-            transition: "background-color 0.3s ease",
-            "&:nth-of-type(even)": {
-              backgroundColor:
-                mode === "light"
-                  ? "rgba(25, 118, 210, 0.1)"
-                  : "rgba(25, 118, 210, 0.2)",
-            },
-            "&:nth-of-type(odd)": {
-              backgroundColor: mode === "light" ? "#fff" : "#1e1e1e",
-            },
-            "&:hover": {
-              backgroundColor: mode === "light" ? "#e3f2fd" : "#333",
-            },
+            backgroundColor: "#0d1117",
           },
         },
       },
