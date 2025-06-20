@@ -1,12 +1,14 @@
 import { Outlet } from "react-router-dom";
 import SideBar from "./SideBar";
 import NavBar from "./Navbar";
-
+import BreadCrums from "./BreadCrums";
+import { useState } from "react";
 export const AdminLayout = () => {
+  const [activePage, setActivePage] = useState("Home");
   return (
     <div className="flex">
       {/* Sidebar */}
-      <SideBar />
+      <SideBar setActivePage={setActivePage} />
 
       {/* Main content area */}
       <div className="flex flex-col flex-grow">
@@ -14,7 +16,10 @@ export const AdminLayout = () => {
         <NavBar />
 
         {/* Content */}
-        <div className="p-6 mt-16">{/* <Outlet /> */}</div>
+        <div className=" flex-grow overflow-auto p-4 ">
+          <BreadCrums activePage={activePage} />
+          <Outlet />
+        </div>
       </div>
     </div>
   );

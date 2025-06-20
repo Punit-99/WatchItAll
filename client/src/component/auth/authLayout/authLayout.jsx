@@ -9,14 +9,14 @@ const Auth = () => {
   const handleChange = (event, newValue) => setTab(newValue);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen ">
       <Paper
         elevation={3}
         className="flex w-[1000px] h-[600px]"
         sx={{ borderRadius: 4 }}
       >
         {/* Left Side */}
-        <div className="w-1/2 bg-gradient-to-b from-blue-500 to-blue-700 text-white flex flex-col justify-center items-center p-8 rounded-l-md">
+        <div className="w-1/2 b flex flex-col justify-center items-center p-8 rounded-l-md">
           <Typography variant="h4" className="mb-4">
             Welcome!
           </Typography>

@@ -1,48 +1,69 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 import "@fontsource/poppins";
 
-export const getTheme = (mode = "dark") => {
+export const getTheme = (mode = "light") => {
   let theme = createTheme({
     palette: {
       mode,
-      ...(mode === "dark" && {
-        background: {
-          default: "#04070b", // main body background
-          paper: "#0d1117", // sidebar paper background
-        },
-        text: {
-          primary: "#ffffff", // default text
-          secondary: "#aeb0b3", // non-selected text
-        },
-        divider: "#333b4d", // borders
-      }),
+      ...(mode === "dark"
+        ? // darkmode
+          {
+            background: {
+              default: "#04070b",
+              paper: "#0d1117",
+            },
+            text: {
+              primary: "#ffffff", // white text in dark mode
+              secondary: "#aeb0b3",
+            },
+            divider: "#333b4d",
+          }
+        : // light mode
+          {
+            background: {
+              default: "#f5f5f5",
+              paper: "#ffffff",
+            },
+            text: {
+              primary: "#000000", // black text in light mode
+              secondary: "#555555",
+            },
+            divider: "#dddddd",
+          }),
     },
 
-    // Typography
     typography: {
       fontFamily: "'Poppins', sans-serif",
-      // Custom variant for sidebar menu text
-      sideMenu: {
-        fontSize: "0.875rem",
-        fontWeight: 500,
-        lineHeight: 1.43,
-      },
     },
 
-    // Component overrides
     components: {
+      MuiIcon: {
+        styleOverrides: {
+          root: {
+            color: mode === "dark" ? "white" : "black",
+          },
+        },
+      },
+
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: mode === "dark" ? "#0d1117" : "white",
+          },
+        },
+      },
       MuiListItem: {
         styleOverrides: {
           root: {
             "&.Mui-selected": {
-              color: "#ffffff",
-              backgroundColor: "rgb(74 78 86)",
+              color: mode === "dark" ? "#ffffff" : "#000000",
+              backgroundColor: mode === "dark" ? "rgb(74 78 86)" : "#e0e0e0",
               "&:hover": {
-                backgroundColor: "rgb(74 78 86)",
+                backgroundColor: mode === "dark" ? "rgb(74 78 86)" : "#d0d0d0",
               },
             },
             "&:hover": {
-              backgroundColor: "#151923",
+              backgroundColor: mode === "dark" ? "#151923" : "#f0f0f0",
             },
           },
         },
@@ -54,14 +75,7 @@ export const getTheme = (mode = "dark") => {
             width: "1rem",
             height: "1rem",
             marginRight: "8px",
-            color: "#aeb0b3",
-          },
-        },
-      },
-      MuiPaper: {
-        styleOverrides: {
-          root: {
-            backgroundColor: "#0d1117",
+            color: mode === "dark" ? "#aeb0b3" : "#555555",
           },
         },
       },

@@ -11,10 +11,14 @@ const DateComponent = () => {
 
   return (
     <Box
+      className="hidden sm:flex"
       sx={{
         borderRadius: "9px",
         padding: "0.6rem 0.6rem",
-        display: "flex",
+        display: {
+          xs: "none",
+          md: "flex",
+        },
         alignItems: "center",
         gap: 0.5,
         width: "fit-content",
@@ -22,8 +26,8 @@ const DateComponent = () => {
         border: 1,
       }}
     >
-      <DateRangeRoundedIcon fontSize="small" color="primary" />
-      <Typography variant="body2">
+      <DateRangeRoundedIcon fontSize="small" sx={{ color: "text.primary" }} />
+      <Typography color="text.primary">
         {month} {date}, {year}
       </Typography>
     </Box>
