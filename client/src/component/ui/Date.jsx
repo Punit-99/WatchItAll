@@ -1,9 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import DateRangeRoundedIcon from "@mui/icons-material/DateRangeRounded";
+import { useTheme } from "@mui/material/styles";
 
 const DateComponent = () => {
-  const today = new Date();
+  const theme = useTheme();
 
+  const today = new Date();
   const options = { month: "long" };
   const month = today.toLocaleString("en-US", options);
   const date = today.getDate();
@@ -24,6 +26,7 @@ const DateComponent = () => {
         width: "fit-content",
         fontSize: "0.8rem",
         border: 1,
+        borderColor: theme.palette.border, // pulling from your theme
       }}
     >
       <DateRangeRoundedIcon fontSize="small" sx={{ color: "text.primary" }} />

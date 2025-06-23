@@ -7,6 +7,7 @@ import {
   InputAdornment,
   Box,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ModeToggle from "../ui/themeToggle";
@@ -17,6 +18,8 @@ import { useDispatch } from "react-redux";
 import { toggleSidebar } from "../../store/navbar/navbar";
 
 const NavBar = () => {
+  const theme = useTheme();
+
   const isMobile = useMediaQuery("(max-width:426px)");
   const dispatch = useDispatch();
   return (
@@ -78,13 +81,22 @@ const NavBar = () => {
             />
 
             <IconButton
-              color="inherit"
-              sx={{ border: 1, borderRadius: "8px", boxShadow: 4 }}
+              sx={{
+                border: 1,
+                borderColor: theme.palette.border,
+                borderRadius: "8px",
+              }}
             >
               <NotificationsIcon />
             </IconButton>
 
-            <Box sx={{ border: 1, borderRadius: "8px", boxShadow: 4 }}>
+            <Box
+              sx={{
+                borderRadius: "8px",
+                border: 1,
+                borderColor: theme.palette.border,
+              }}
+            >
               <ModeToggle />
             </Box>
           </Box>
