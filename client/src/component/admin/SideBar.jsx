@@ -30,8 +30,9 @@ const drawerWidth = 240;
 
 const sidebarMenuItem = [
   { name: "Home", icon: <HomeRoundedIcon />, path: "/" },
-  { name: "Analytics", icon: <AcUnitRoundedIcon />, path: "/shows" },
-  { name: "Client", icon: <AcUnitRoundedIcon />, path: "/newshows" },
+  { name: "Shows", icon: <AcUnitRoundedIcon />, path: "/shows" },
+  { name: "Create Show", icon: <AcUnitRoundedIcon />, path: "/new-show" },
+  { name: "Users", icon: <AcUnitRoundedIcon />, path: "/users" },
 ];
 
 const SideBar = ({ setActivePage }) => {
