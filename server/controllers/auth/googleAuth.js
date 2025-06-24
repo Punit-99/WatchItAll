@@ -1,7 +1,6 @@
 import * as arctic from "arctic";
 import { google } from "../../utils/googleOauth.js";
 import User from "../../models/User.js";
-import { Profiler } from "react";
 
 export const googleLoginPage = async (req, res) => {
   const state = arctic.generateState();
@@ -59,8 +58,6 @@ export const googleCallback = async (req, res) => {
     });
 
     if (!checkUser) {
-      
-
     }
 
     res.send(`Hello ${user.name}, Google OAuth successful`);

@@ -152,6 +152,13 @@ export const getTheme = (mode = "light") => {
           },
         },
       },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            background: selectedTheme.background.paper,
+          },
+        },
+      },
     },
   });
 
