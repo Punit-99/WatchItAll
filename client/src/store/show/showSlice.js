@@ -9,6 +9,8 @@ const initialState = {
   genres: [],
   languages: [],
   uploads: [], // [{ subtitle, url, public_id, resourceType }]
+  movieParts: [],
+  webseriesSeasons: [],
 };
 
 const showSlice = createSlice({
@@ -38,6 +40,12 @@ const showSlice = createSlice({
       state.uploads = [];
     },
     resetShowForm: () => initialState,
+    setMovieParts: (state, action) => {
+      state.movieParts = action.payload;
+    },
+    setWebseriesSeasons: (state, action) => {
+      state.webseriesSeasons = action.payload;
+    },
   },
 });
 
@@ -49,6 +57,8 @@ export const {
   removeUpload,
   clearAllUploads,
   resetShowForm,
+  setMovieParts,
+  setWebseriesSeasons,
 } = showSlice.actions;
 
 export default showSlice.reducer;

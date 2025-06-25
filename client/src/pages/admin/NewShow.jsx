@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Tabs, Tab, Box, Paper, Typography, Button } from "@mui/material";
 
 import ShowDetails from "./showUpload/ShowDetail";
@@ -8,10 +8,10 @@ import { useSelector } from "react-redux";
 
 const NewShow = () => {
   const [tab, setTab] = useState(0);
+  const tabs = ["Type & Details", "Tags", "Upload"];
 
   const show = useSelector((state) => state.show); // Assumes full show form is here
-
-  const tabs = ["Type & Details", "Tags", "Upload"];
+  const posterUrl = useSelector((state) => state.posterUpload.url);
 
   return (
     <div className="flex h-screen p-4 gap-6">
@@ -82,8 +82,16 @@ const NewShow = () => {
                 if (tab < tabs.length - 1) {
                   setTab((prev) => prev + 1);
                 } else {
-                  alert("Submit functionality coming soon");
-                  // Optional: Submit Redux data to backend here
+                  // ✅ Prepare final data structure for submission
+                  const finalData = {
+                    ...show,
+                    uploads: show.uploads,
+                    poster: posterUrl,
+                  };
+
+                  console.log("Final Show JSON:", finalData);
+
+                  // Later: send finalData to backend
                 }
               }}
             >

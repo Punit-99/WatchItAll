@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Button,
@@ -14,31 +14,16 @@ import {
   clearAllUploads,
   addUpload,
   removeUpload,
+  setMovieParts,
+  setWebseriesSeasons,
 } from "../../../store/show/showSlice";
 import { deleteFile, resetUpload } from "../../../store/upload/fileUploadSlice";
 
 const ShowUpload = () => {
   const dispatch = useDispatch();
-  const { type } = useSelector((state) => state.show);
-
-  // Local UI-only state to track structure
-  const [movieParts, setMovieParts] = useState([
-    { id: Date.now(), subtitle: "", url: "", public_id: "", resourceType: "" },
-  ]);
-  const [seasons, setSeasons] = useState([
-    {
-      season: 1,
-      episodes: [
-        {
-          id: Date.now(),
-          subtitle: "",
-          url: "",
-          public_id: "",
-          resourceType: "",
-        },
-      ],
-    },
-  ]);
+  const { type, movieParts, webseriesSeasons } = useSelector(
+    (state) => state.show
+  );
 
   const handleUpload = (fileData, type, sIdx = null, eIdx = null) => {
     if (!fileData?.public_id) return;
@@ -49,18 +34,18 @@ const ShowUpload = () => {
 
       const updated = [...movieParts];
       updated[sIdx] = { ...updated[sIdx], ...fileData };
-      setMovieParts(updated);
+      dispatch(setMovieParts(updated));
       dispatch(addUpload(fileData));
     } else {
-      const existing = seasons[sIdx].episodes[eIdx];
+      const existing = webseriesSeasons[sIdx].episodes[eIdx];
       if (existing?.public_id === fileData.public_id) return;
 
-      const updated = [...seasons];
+      const updated = [...webseriesSeasons];
       updated[sIdx].episodes[eIdx] = {
         ...updated[sIdx].episodes[eIdx],
         ...fileData,
       };
-      setSeasons(updated);
+      dispatch(setWebseriesSeasons(updated));
       dispatch(
         addUpload({
           season: updated[sIdx].season,
@@ -76,78 +61,86 @@ const ShowUpload = () => {
 
     if (type === "movie") {
       const updated = movieParts.filter((_, i) => i !== sIdx);
-      setMovieParts(updated);
+      dispatch(setMovieParts(updated));
     } else {
-      const updatedSeasons = [...seasons];
+      const updatedSeasons = [...webseriesSeasons];
       updatedSeasons[sIdx].episodes.splice(eIdx, 1);
       if (updatedSeasons[sIdx].episodes.length === 0) {
-        updatedSeasons.splice(sIdx, 1); // remove whole season if no episodes
+        updatedSeasons.splice(sIdx, 1);
       }
-      setSeasons(updatedSeasons);
+      dispatch(setWebseriesSeasons(updatedSeasons));
     }
   };
 
   const handleClearAll = () => {
     dispatch(clearAllUploads());
     dispatch(resetUpload());
-    setMovieParts([
-      {
-        id: Date.now(),
-        subtitle: "",
-        url: "",
-        public_id: "",
-        resourceType: "",
-      },
-    ]);
-    setSeasons([
-      {
-        season: 1,
-        episodes: [
-          {
-            id: Date.now(),
-            subtitle: "",
-            url: "",
-            public_id: "",
-            resourceType: "",
-          },
-        ],
-      },
-    ]);
+    dispatch(
+      setMovieParts([
+        {
+          id: Date.now(),
+          subtitle: "",
+          url: "",
+          public_id: "",
+          resourceType: "",
+        },
+      ])
+    );
+    dispatch(
+      setWebseriesSeasons([
+        {
+          season: 1,
+          episodes: [
+            {
+              id: Date.now(),
+              subtitle: "",
+              url: "",
+              public_id: "",
+              resourceType: "",
+            },
+          ],
+        },
+      ])
+    );
   };
 
   const addMoviePart = () => {
-    setMovieParts([
-      ...movieParts,
-      {
-        id: Date.now(),
-        subtitle: "",
-        url: "",
-        public_id: "",
-        resourceType: "",
-      },
-    ]);
+    dispatch(
+      setMovieParts([
+        ...movieParts,
+        {
+          id: Date.now(),
+          subtitle: "",
+          url: "",
+          public_id: "",
+          resourceType: "",
+        },
+      ])
+    );
   };
 
   const addSeason = () => {
-    setSeasons([
-      ...seasons,
-      {
-        season: seasons.length + 1,
-        episodes: [
-          {
-            id: Date.now(),
-            subtitle: "",
-            url: "",
-            public_id: "",
-            resourceType: "",
-          },
-        ],
-      },
-    ]);
+    dispatch(
+      setWebseriesSeasons([
+        ...webseriesSeasons,
+        {
+          season: webseriesSeasons.length + 1,
+          episodes: [
+            {
+              id: Date.now(),
+              subtitle: "",
+              url: "",
+              public_id: "",
+              resourceType: "",
+            },
+          ],
+        },
+      ])
+    );
   };
 
   const addEpisode = (seasonIdx) => {
-    const updated = [...seasons];
+    const updated = [...webseriesSeasons];
     updated[seasonIdx].episodes.push({
       id: Date.now(),
       subtitle: "",
@@ -155,18 +148,21 @@ const ShowUpload = () => {
       public_id: "",
       resourceType: "",
     });
-    setSeasons(updated);
+    dispatch(setWebseriesSeasons(updated));
   };
 
   const handleSubtitleChange = (value, type, sIdx, eIdx) => {
     if (type === "movie") {
       const updated = [...movieParts];
-      updated[sIdx].subtitle = value;
-      setMovieParts(updated);
+      updated[sIdx] = { ...updated[sIdx], subtitle: value };
+      dispatch(setMovieParts(updated));
     } else {
-      const updated = [...seasons];
-      updated[sIdx].episodes[eIdx].subtitle = value;
-      setSeasons(updated);
+      const updated = [...webseriesSeasons];
+      updated[sIdx].episodes[eIdx] = {
+        ...updated[sIdx].episodes[eIdx],
+        subtitle: value,
+      };
+      dispatch(setWebseriesSeasons(updated));
     }
   };
 
@@ -176,7 +172,6 @@ const ShowUpload = () => {
         {type === "movie" ? "Movie Parts" : "Web Series Seasons"}
       </Typography>
 
-      {/* Movie Upload UI */}
       {type === "movie" &&
         movieParts.map((part, i) => (
           <Box
@@ -206,7 +201,6 @@ const ShowUpload = () => {
                 )
               }
             />
-
             <IconButton
               className="absolute top-2 right-2"
               onClick={() =>
@@ -230,14 +224,12 @@ const ShowUpload = () => {
         </Button>
       )}
 
-      {/* Webseries Upload UI */}
       {type === "webseries" &&
-        seasons.map((season, sIdx) => (
+        webseriesSeasons.map((season, sIdx) => (
           <Box key={season.season} className="border rounded p-4">
             <Typography variant="subtitle1" className="font-semibold mb-2">
               Season {season.season}
             </Typography>
-
             {season.episodes.map((ep, eIdx) => (
               <Box
                 key={ep.id}
@@ -278,7 +270,6 @@ const ShowUpload = () => {
                     )
                   }
                 />
-
                 <IconButton
                   className="absolute top-2 right-2"
                   onClick={() =>
@@ -295,7 +286,6 @@ const ShowUpload = () => {
                 </IconButton>
               </Box>
             ))}
-
             <Button
               size="small"
               variant="outlined"
