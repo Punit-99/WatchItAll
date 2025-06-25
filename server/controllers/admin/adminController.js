@@ -5,7 +5,6 @@ export const handleFileUpload = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-    console.log(req.file);
     const { path, filename, mimetype, size } = req.file;
     const resourceType = req.file.mimetype.startsWith("image/")
       ? "image"
@@ -30,7 +29,7 @@ export const handleFileUpload = async (req, res) => {
 export const handleDeleteUpload = async (req, res) => {
   try {
     const { public_id, resourceType } = req.body;
-    console.log(public_id);
+    
     if (!public_id) {
       return res.status(400).json({ message: "Missing public_id" });
     }

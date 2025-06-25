@@ -21,7 +21,7 @@ const UploadFile = ({ onUpload }) => {
   };
 
   const handleDelete = () => {
-    console.log(resourceType);
+
     if (public_id && resourceType) {
       dispatch(deleteFile({ public_id, file_type: resourceType }));
     }
