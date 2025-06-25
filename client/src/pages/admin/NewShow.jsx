@@ -11,7 +11,7 @@ const NewShow = () => {
   const tabs = ["Type & Details", "Tags", "Upload"];
 
   const show = useSelector((state) => state.show); // Assumes full show form is here
-  const posterUrl = useSelector((state) => state.posterUpload.url);
+  // const posterUrl = useSelector((state) => state.posterUpload.url);
 
   return (
     <div className="flex h-screen p-4 gap-6">
@@ -33,7 +33,7 @@ const NewShow = () => {
               <b>Genres:</b> {show.genres?.join(", ")}
             </Typography>
             <Typography>
-              <b>Languages:</b> {show.language?.join(", ")}
+              <b>Languages:</b> {show.languages?.join(", ")}
             </Typography>
             <Typography>
               <b>Release Date:</b> {show.releaseDate}
@@ -85,8 +85,8 @@ const NewShow = () => {
                   // ✅ Prepare final data structure for submission
                   const finalData = {
                     ...show,
-                    uploads: show.uploads,
-                    poster: posterUrl,
+                    // uploads: show.uploads,
+                    // poster: posterUrl,
                   };
 
                   console.log("Final Show JSON:", finalData);

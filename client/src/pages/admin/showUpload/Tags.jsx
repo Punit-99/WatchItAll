@@ -1,15 +1,19 @@
-import { useState } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { genres, languages } from "../../../utils/showFields";
 import { Chip, Box, Typography } from "@mui/material";
+import { setGenres, setLanguages } from "../../../store/show/showSlice";
 
 export default function GenreLanguageSelector() {
-  const [selectedGenres, setSelectedGenres] = useState([]);
-  const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const dispatch = useDispatch();
+  const selectedGenres = useSelector((state) => state.show.genres);
+  const selectedLanguages = useSelector((state) => state.show.languages);
 
-  const handleToggle = (item, list, setList) => {
-    setList((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
-    );
+  const handleToggle = (item, list, setAction) => {
+    const updatedList = list.includes(item)
+      ? list.filter((i) => i !== item)
+      : [...list, item];
+    dispatch(setAction(updatedList));
   };
 
   return (
@@ -25,9 +29,7 @@ export default function GenreLanguageSelector() {
               key={genre}
               label={genre}
               clickable
-              onClick={() =>
-                handleToggle(genre, selectedGenres, setSelectedGenres)
-              }
+              onClick={() => handleToggle(genre, selectedGenres, setGenres)}
               variant={selectedGenres.includes(genre) ? "filled" : "outlined"}
               color={selectedGenres.includes(genre) ? "primary" : "default"}
               sx={{
@@ -46,20 +48,16 @@ export default function GenreLanguageSelector() {
           Languages
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-          {languages.map((language) => (
+          {languages.map((lang) => (
             <Chip
-              key={language}
-              label={language}
+              key={lang}
+              label={lang}
               clickable
               onClick={() =>
-                handleToggle(language, selectedLanguages, setSelectedLanguages)
+                handleToggle(lang, selectedLanguages, setLanguages)
               }
-              variant={
-                selectedLanguages.includes(language) ? "filled" : "outlined"
-              }
-              color={
-                selectedLanguages.includes(language) ? "primary" : "default"
-              }
+              variant={selectedLanguages.includes(lang) ? "filled" : "outlined"}
+              color={selectedLanguages.includes(lang) ? "primary" : "default"}
               sx={{
                 fontSize: "0.875rem",
                 borderRadius: "999px",
