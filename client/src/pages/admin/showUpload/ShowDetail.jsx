@@ -76,7 +76,13 @@ const ShowDetails = () => {
         <Typography className="mb-2 font-medium text-gray-600">
           Upload Poster
         </Typography>
-        <MediaUpload onUpload={handlePosterUpload} />
+        <MediaUpload
+          type="poster"
+          value={{ url: posterUrl }}
+          onUpload={(data) => handlePosterUpload(data.url)}
+          onDelete={() => handlePosterUpload("")}
+        />
+
         {posterUrl && (
           <img
             src={posterUrl}

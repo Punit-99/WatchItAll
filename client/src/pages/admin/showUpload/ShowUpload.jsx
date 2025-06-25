@@ -191,8 +191,22 @@ const ShowUpload = () => {
               size="small"
             />
             <MediaUpload
-              onUpload={(fileData) => handleUpload(fileData, "movie", i)}
+              type="media"
+              value={part}
+              onUpload={(data) =>
+                handleUpload({ ...data, subtitle: part.subtitle }, "movie", i)
+              }
+              onDelete={() =>
+                handleRemove(
+                  part.public_id,
+                  part.resourceType,
+                  "movie",
+                  i,
+                  null
+                )
+              }
             />
+
             <IconButton
               className="absolute top-2 right-2"
               onClick={() =>
@@ -244,10 +258,27 @@ const ShowUpload = () => {
                   size="small"
                 />
                 <MediaUpload
-                  onUpload={(fileData) =>
-                    handleUpload(fileData, "webseries", sIdx, eIdx)
+                  type="media"
+                  value={ep}
+                  onUpload={(data) =>
+                    handleUpload(
+                      { ...data, subtitle: ep.subtitle },
+                      "webseries",
+                      sIdx,
+                      eIdx
+                    )
+                  }
+                  onDelete={() =>
+                    handleRemove(
+                      ep.public_id,
+                      ep.resourceType,
+                      "webseries",
+                      sIdx,
+                      eIdx
+                    )
                   }
                 />
+
                 <IconButton
                   className="absolute top-2 right-2"
                   onClick={() =>

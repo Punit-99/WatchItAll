@@ -17,18 +17,13 @@ import {
   clearAllMediaUploads,
 } from "../../store/show/mediaUploadSlice";
 
-const MediaUpload = ({ onUpload, type = "poster" }) => {
+const MediaUpload = ({ onUpload, onDelete, value = {}, type = "poster" }) => {
   const dispatch = useDispatch();
 
-  // Selectors
-  const poster = useSelector((state) => state.posterUpload);
-  const media = useSelector((state) => state.mediaUpload);
-
-  const current = type === "poster" ? poster : media;
-  const isLoading = current.loading;
-  const url = current.url;
-  const public_id = current.public_id;
-  const resourceType = current.resourceType;
+  const { url, public_id, resourceType } = value;
+  const loading = useSelector((state) =>
+    type === "poster" ? state.posterUpload.loading : state.mediaUpload.loading
+  );
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -37,7 +32,7 @@ const MediaUpload = ({ onUpload, type = "poster" }) => {
     const thunk = type === "poster" ? uploadPoster : uploadMediaFile;
     dispatch(thunk(file)).then((res) => {
       if (res.payload?.url) {
-        onUpload?.(res.payload); // pass full { url, public_id, resourceType }
+        onUpload?.(res.payload); // Update parent state
       }
     });
   };
@@ -45,9 +40,7 @@ const MediaUpload = ({ onUpload, type = "poster" }) => {
   const handleDelete = () => {
     const thunk = type === "poster" ? deletePoster : deleteMediaFile;
     dispatch(thunk({ public_id, resourceType }));
-    const reset = type === "poster" ? resetPoster : clearAllMediaUploads;
-    dispatch(reset());
-    onUpload?.(null); // Optional: notify parent
+    onDelete?.(public_id); // Optional: remove from parent
   };
 
   return (
@@ -58,12 +51,12 @@ const MediaUpload = ({ onUpload, type = "poster" }) => {
             variant="outlined"
             component="label"
             startIcon={<CloudUpload />}
-            disabled={isLoading}
+            disabled={loading}
           >
-            {isLoading ? "Uploading..." : "Choose File"}
+            {loading ? "Uploading..." : "Choose File"}
             <input type="file" hidden onChange={handleFileChange} />
           </Button>
-          {isLoading && <CircularProgress size={24} />}
+          {loading && <CircularProgress size={24} />}
         </>
       ) : (
         <>
