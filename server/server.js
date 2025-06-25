@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./database/db.js";
-import authRoutes from "./routes/auth/auth.js";
-import adminRoutes from "./routes/admin/admin.js";
+import authRoutes from "./routes/auth/authRoute.js";
+import adminRoutes from "./routes/admin/adminRoute.js";
 
 const app = express();
 
