@@ -20,6 +20,7 @@ export const handleFileUpload = async (req, res) => {
       resourceType,
       size,
     });
+    console.log("Media Uploaded", filename);
   } catch (error) {
     console.error("File Upload Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -29,7 +30,7 @@ export const handleFileUpload = async (req, res) => {
 export const handleDeleteUpload = async (req, res) => {
   try {
     const { public_id, resourceType } = req.body;
-    
+
     if (!public_id) {
       return res.status(400).json({ message: "Missing public_id" });
     }
