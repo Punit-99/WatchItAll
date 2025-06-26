@@ -7,6 +7,7 @@ import {
   Stepper,
   Step,
   StepLabel,
+  Alert,
 } from "@mui/material";
 
 import ShowDetails from "./showUpload/ShowDetail";
@@ -18,19 +19,111 @@ const steps = ["Type & Details", "Tags", "Upload"];
 
 const NewShow = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [errors, setErrors] = useState([]);
   const show = useSelector((state) => state.show);
 
+  const isValidURL = (url) => typeof url === "string" && url.startsWith("http");
+
+  const validateStep = (step) => {
+    const newErrors = [];
+
+    if (step === 0) {
+      const { type, title, description, releaseDate, poster } = show;
+
+      if (!(type === "movie" || type === "webseries")) {
+        newErrors.push("Type must be either 'Movie' or 'Web Series'.");
+      }
+      if (!title.trim()) newErrors.push("Title is required.");
+      if (!description.trim()) newErrors.push("Description is required.");
+      if (!releaseDate) newErrors.push("Release Date is required.");
+      if (
+        !poster?.url ||
+        !poster.public_id ||
+        poster.resourceType !== "image"
+      ) {
+        newErrors.push("Valid poster must be uploaded.");
+      }
+
+      setErrors(newErrors);
+      return newErrors.length === 0;
+    }
+
+    if (step === 1) {
+      const { genres, languages } = show;
+
+      if (!genres.length) {
+        newErrors.push("At least one genres must be selected.");
+      }
+      if (!languages.length) {
+        newErrors.push("At least one languages must be selected.");
+      }
+
+      setErrors(newErrors);
+      return newErrors.length === 0;
+    }
+
+    if (step === 2) {
+      if (show.type === "movie") {
+        if (!show.movieParts.length) {
+          newErrors.push("At least one movie part must be added.");
+        } else {
+          show.movieParts.forEach((part, idx) => {
+            if (!part.subtitle.trim())
+              newErrors.push(`Subtitle missing in Part ${idx + 1}`);
+            if (!isValidURL(part.url))
+              newErrors.push(`Upload missing for Part ${idx + 1}`);
+          });
+        }
+      } else {
+        if (!show.webseriesSeasons.length) {
+          newErrors.push("At least one season is required.");
+        } else {
+          show.webseriesSeasons.forEach((season, sIdx) => {
+            if (!season.episodes.length) {
+              newErrors.push(`Season ${season.season} has no episodes.`);
+            } else {
+              season.episodes.forEach((ep, eIdx) => {
+                if (!ep.subtitle.trim())
+                  newErrors.push(
+                    `Subtitle missing in Season ${season.season}, Episode ${
+                      eIdx + 1
+                    }`
+                  );
+                if (!isValidURL(ep.url))
+                  newErrors.push(
+                    `Upload missing in Season ${season.season}, Episode ${
+                      eIdx + 1
+                    }`
+                  );
+              });
+            }
+          });
+        }
+      }
+
+      setErrors(newErrors);
+      return newErrors.length === 0;
+    }
+
+    return false;
+  };
+
   const handleNext = () => {
+    const isValid = validateStep(activeStep);
+    if (!isValid) return;
+
+    setErrors([]);
+
     if (activeStep < steps.length - 1) {
       setActiveStep((prev) => prev + 1);
     } else {
-      const finalData = { ...show };
-      console.log("Final Show JSON:", finalData);
+      console.log("Final Show JSON:", show);
     }
   };
 
   const handleBack = () => {
     setActiveStep((prev) => prev - 1);
+    setErrors([]);
   };
 
   const renderStepContent = (step) => {
@@ -47,68 +140,42 @@ const NewShow = () => {
   };
 
   return (
-    <div className="flex h-screen p-4 gap-6">
-      {/* Left: Live Preview */}
-      {/* <div className="w-1/2">
-        <Paper elevation={3} className="p-6 rounded-xl">
-          <Typography variant="h5" className="mb-4 font-bold">
-            Live Preview
-          </Typography>
-          <Box className="space-y-3">
-            <Typography variant="h6">{show.title || "Title Here"}</Typography>
-            <Typography className="text-gray-500 italic">
-              {show.description || "Description..."}
-            </Typography>
-            <Typography>
-              <b>Type:</b> {show.type}
-            </Typography>
-            <Typography>
-              <b>Genres:</b> {show.genres?.join(", ")}
-            </Typography>
-            <Typography>
-              <b>Languages:</b> {show.languages?.join(", ")}
-            </Typography>
-            <Typography>
-              <b>Release Date:</b> {show.releaseDate}
-            </Typography>
-            {show.posterUrl && (
-              <img
-                src={show.posterUrl}
-                alt="Poster"
-                className="mt-2 rounded max-h-64"
-              />
-            )}
-          </Box>
-        </Paper>
-      </div> */}
+    <div>
+      <Paper elevation={3} className="p-6 rounded-xl h-full">
+        <Stepper activeStep={activeStep}>
+          {steps.map((label, index) => (
+            <Step key={index}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
 
-      {/* Right: Horizontal Stepper Form */}
-      <div className="w-full">
-        <Paper elevation={3} className="p-6 rounded-xl h-full">
-          <Stepper activeStep={activeStep}>
-            {steps.map((label, index) => (
-              <Step key={index}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
+        <Box mt={4}>{renderStepContent(activeStep)}</Box>
+
+        {/* Error Section */}
+        {errors.length > 0 && (
+          <Box mt={3}>
+            {errors.map((err, i) => (
+              <Alert key={i} severity="error" sx={{ mb: 1 }}>
+                {err}
+              </Alert>
             ))}
-          </Stepper>
-
-          <Box mt={4}>{renderStepContent(activeStep)}</Box>
-
-          <Box mt={6} display="flex" justifyContent="space-between">
-            <Button
-              variant="outlined"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-            >
-              Back
-            </Button>
-            <Button variant="contained" onClick={handleNext}>
-              {activeStep === steps.length - 1 ? "Submit" : "Next"}
-            </Button>
           </Box>
-        </Paper>
-      </div>
+        )}
+
+        <Box mt={6} display="flex" justifyContent="space-between">
+          <Button
+            variant="outlined"
+            disabled={activeStep === 0}
+            onClick={handleBack}
+          >
+            Back
+          </Button>
+          <Button variant="contained" onClick={handleNext}>
+            {activeStep === steps.length - 1 ? "Submit" : "Next"}
+          </Button>
+        </Box>
+      </Paper>
     </div>
   );
 };

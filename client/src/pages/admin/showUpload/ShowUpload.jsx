@@ -188,11 +188,11 @@ const ShowUpload = () => {
               >
                 <Delete />
               </IconButton>
-              <Stack spacing={2} flex={1}>
+              <Stack spacing={1.5} flex={1}>
                 <TextField
                   fullWidth
                   label="Subtitle *"
-                  value={part.subtitle}
+                  value={part.subtitle || ""}
                   onChange={(e) =>
                     handleSubtitleChange(e.target.value, "movie", i)
                   }
@@ -218,6 +218,11 @@ const ShowUpload = () => {
                     )
                   }
                 />
+                {part.url && (
+                  <Typography variant="caption" color="success.main">
+                    ✅ Uploaded
+                  </Typography>
+                )}
               </Stack>
             </Stack>
           )
@@ -260,11 +265,11 @@ const ShowUpload = () => {
                 >
                   <Delete />
                 </IconButton>
-                <Stack spacing={2} flex={1}>
+                <Stack spacing={1.5} flex={1}>
                   <TextField
                     fullWidth
                     label={`Episode ${eIdx + 1} Subtitle *`}
-                    value={ep.subtitle}
+                    value={ep.subtitle || ""}
                     onChange={(e) =>
                       handleSubtitleChange(
                         e.target.value,
@@ -296,6 +301,11 @@ const ShowUpload = () => {
                       )
                     }
                   />
+                  {ep.url && (
+                    <Typography variant="caption" color="success.main">
+                      ✅ Uploaded
+                    </Typography>
+                  )}
                 </Stack>
               </Stack>
             ))}

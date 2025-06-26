@@ -12,7 +12,7 @@ import { setShowDetails } from "../../../store/show/showSlice";
 
 const ShowDetails = () => {
   const dispatch = useDispatch();
-  const { type, title, description, releaseDate, posterUrl } = useSelector(
+  const { type, title, description, releaseDate, poster } = useSelector(
     (state) => state.show
   );
 
@@ -21,8 +21,8 @@ const ShowDetails = () => {
     dispatch(setShowDetails({ name, value }));
   };
 
-  const handlePosterUpload = (url) => {
-    dispatch(setShowDetails({ name: "posterUrl", value: url }));
+  const handlePosterUpload = (data) => {
+    dispatch(setShowDetails({ name: "poster", value: data })); // full object
   };
 
   return (
@@ -105,9 +105,11 @@ const ShowDetails = () => {
         </Typography>
         <MediaUpload
           type="poster"
-          value={{ url: posterUrl }}
-          onUpload={(data) => handlePosterUpload(data.url)}
-          onDelete={() => handlePosterUpload("")}
+          value={poster}
+          onUpload={handlePosterUpload}
+          onDelete={() =>
+            handlePosterUpload({ url: "", public_id: "", resourceType: "" })
+          }
         />
       </Box>
     </Stack>

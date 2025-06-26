@@ -4,7 +4,11 @@ const initialState = {
   type: "movie", // or 'webseries'
   title: "",
   description: "",
-  posterUrl: "",
+  poster: {
+    url: "",
+    public_id: "",
+    resourceType: "",
+  },
   releaseDate: "",
   genres: [],
   languages: [],
