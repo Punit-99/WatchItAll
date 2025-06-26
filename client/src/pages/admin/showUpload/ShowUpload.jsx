@@ -6,9 +6,11 @@ import {
   Typography,
   IconButton,
   Divider,
+  Stack,
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuid } from "uuid";
 import MediaUpload from "../../../component/admin/MediaUpload";
 import {
   clearAllUploads,
@@ -25,31 +27,37 @@ const ShowUpload = () => {
     (state) => state.show
   );
 
+  const createEmptyPart = () => ({
+    id: uuid(),
+    subtitle: "",
+    url: "",
+    public_id: "",
+    resourceType: "",
+  });
+
   const handleUpload = (fileData, type, sIdx = null, eIdx = null) => {
     if (!fileData?.public_id) return;
 
     if (type === "movie") {
-      const existing = movieParts[sIdx];
-      if (existing?.public_id === fileData.public_id) return;
-
-      const updated = [...movieParts];
-      updated[sIdx] = { ...updated[sIdx], ...fileData };
+      const updated = movieParts.map((part, i) =>
+        i === sIdx ? { ...part, ...fileData } : part
+      );
       dispatch(setMovieParts(updated));
       dispatch(addUpload(fileData));
     } else {
-      const existing = webseriesSeasons[sIdx].episodes[eIdx];
-      if (existing?.public_id === fileData.public_id) return;
+      const updatedSeasons = webseriesSeasons.map((season, i) => {
+        if (i !== sIdx) return season;
+        const updatedEpisodes = season.episodes.map((ep, j) =>
+          j === eIdx ? { ...ep, ...fileData } : ep
+        );
+        return { ...season, episodes: updatedEpisodes };
+      });
 
-      const updated = [...webseriesSeasons];
-      updated[sIdx].episodes[eIdx] = {
-        ...updated[sIdx].episodes[eIdx],
-        ...fileData,
-      };
-      dispatch(setWebseriesSeasons(updated));
+      dispatch(setWebseriesSeasons(updatedSeasons));
       dispatch(
         addUpload({
-          season: updated[sIdx].season,
-          episodes: updated[sIdx].episodes,
+          season: webseriesSeasons[sIdx].season,
+          episodes: updatedSeasons[sIdx].episodes,
         })
       );
     }
@@ -61,62 +69,39 @@ const ShowUpload = () => {
 
     if (type === "movie") {
       const updated = movieParts.filter((_, i) => i !== sIdx);
-      dispatch(setMovieParts(updated));
+      dispatch(setMovieParts(updated.length ? updated : [createEmptyPart()]));
     } else {
-      const updatedSeasons = [...webseriesSeasons];
-      updatedSeasons[sIdx].episodes.splice(eIdx, 1);
-      if (updatedSeasons[sIdx].episodes.length === 0) {
-        updatedSeasons.splice(sIdx, 1);
-      }
-      dispatch(setWebseriesSeasons(updatedSeasons));
+      const updatedSeasons = webseriesSeasons
+        .map((season, index) => {
+          if (index !== sIdx) return season;
+          const newEpisodes = season.episodes.filter((_, i) => i !== eIdx);
+          return newEpisodes.length > 0
+            ? { ...season, episodes: newEpisodes }
+            : null;
+        })
+        .filter(Boolean);
+
+      dispatch(
+        setWebseriesSeasons(
+          updatedSeasons.length
+            ? updatedSeasons
+            : [{ season: 1, episodes: [createEmptyPart()] }]
+        )
+      );
     }
   };
 
   const handleClearAll = () => {
     dispatch(clearAllUploads());
     dispatch(resetUpload());
+    dispatch(setMovieParts([createEmptyPart()]));
     dispatch(
-      setMovieParts([
-        {
-          id: Date.now(),
-          subtitle: "",
-          url: "",
-          public_id: "",
-          resourceType: "",
-        },
-      ])
-    );
-    dispatch(
-      setWebseriesSeasons([
-        {
-          season: 1,
-          episodes: [
-            {
-              id: Date.now(),
-              subtitle: "",
-              url: "",
-              public_id: "",
-              resourceType: "",
-            },
-          ],
-        },
-      ])
+      setWebseriesSeasons([{ season: 1, episodes: [createEmptyPart()] }])
     );
   };
 
   const addMoviePart = () => {
-    dispatch(
-      setMovieParts([
-        ...movieParts,
-        {
-          id: Date.now(),
-          subtitle: "",
-          url: "",
-          public_id: "",
-          resourceType: "",
-        },
-      ])
-    );
+    dispatch(setMovieParts([...movieParts, createEmptyPart()]));
   };
 
   const addSeason = () => {
@@ -125,98 +110,118 @@ const ShowUpload = () => {
         ...webseriesSeasons,
         {
           season: webseriesSeasons.length + 1,
-          episodes: [
-            {
-              id: Date.now(),
-              subtitle: "",
-              url: "",
-              public_id: "",
-              resourceType: "",
-            },
-          ],
+          episodes: [createEmptyPart()],
         },
       ])
     );
   };
 
   const addEpisode = (seasonIdx) => {
-    const updated = [...webseriesSeasons];
-    updated[seasonIdx].episodes.push({
-      id: Date.now(),
-      subtitle: "",
-      url: "",
-      public_id: "",
-      resourceType: "",
+    const updated = webseriesSeasons.map((season, i) => {
+      if (i !== seasonIdx) return season;
+      return {
+        ...season,
+        episodes: [...season.episodes, createEmptyPart()],
+      };
     });
     dispatch(setWebseriesSeasons(updated));
   };
 
   const handleSubtitleChange = (value, type, sIdx, eIdx) => {
     if (type === "movie") {
-      const updated = [...movieParts];
-      updated[sIdx] = { ...updated[sIdx], subtitle: value };
+      const updated = movieParts.map((part, i) =>
+        i === sIdx ? { ...part, subtitle: value } : part
+      );
       dispatch(setMovieParts(updated));
     } else {
-      const updated = [...webseriesSeasons];
-      updated[sIdx].episodes[eIdx] = {
-        ...updated[sIdx].episodes[eIdx],
-        subtitle: value,
-      };
+      const updated = webseriesSeasons.map((season, i) => {
+        if (i !== sIdx) return season;
+        const updatedEpisodes = season.episodes.map((ep, j) =>
+          j === eIdx ? { ...ep, subtitle: value } : ep
+        );
+        return { ...season, episodes: updatedEpisodes };
+      });
       dispatch(setWebseriesSeasons(updated));
     }
   };
 
   return (
-    <Box className="mt-6 space-y-6">
-      <Typography variant="h6" className="font-semibold">
+    <Box sx={{ mt: 6, display: "flex", flexDirection: "column", gap: 4 }}>
+      <Typography variant="h6" fontWeight={600}>
         {type === "movie" ? "Movie Parts" : "Web Series Seasons"}
       </Typography>
 
-      {type === "movie" &&
-        movieParts.map((part, i) => (
-          <Box
-            key={part.id}
-            className="border p-4 rounded-lg relative space-y-2"
+      {type === "webseries" && (
+        <Box>
+          <Button
+            variant="outlined"
+            onClick={addSeason}
+            startIcon={<Add />}
+            size="small"
           >
-            <TextField
-              fullWidth
-              label="Subtitle *"
-              value={part.subtitle}
-              onChange={(e) => handleSubtitleChange(e.target.value, "movie", i)}
-              size="small"
-            />
-            <MediaUpload
-              type="media"
-              value={part}
-              onUpload={(data) =>
-                handleUpload({ ...data, subtitle: part.subtitle }, "movie", i)
-              }
-              onDelete={() =>
-                handleRemove(
-                  part.public_id,
-                  part.resourceType,
-                  "movie",
-                  i,
-                  null
-                )
-              }
-            />
-            <IconButton
-              className="absolute top-2 right-2"
-              onClick={() =>
-                handleRemove(
-                  part.public_id,
-                  part.resourceType,
-                  "movie",
-                  i,
-                  null
-                )
-              }
+            Add Season
+          </Button>
+        </Box>
+      )}
+
+      {type === "movie" &&
+        (movieParts.length ? movieParts : [createEmptyPart()]).map(
+          (part, i) => (
+            <Stack
+              key={part.id || i}
+              direction="row"
+              spacing={2}
+              alignItems="flex-start"
+              className="border p-4 rounded-lg"
             >
-              <Delete />
-            </IconButton>
-          </Box>
-        ))}
+              <IconButton
+                onClick={() =>
+                  handleRemove(
+                    part.public_id,
+                    part.resourceType,
+                    "movie",
+                    i,
+                    null
+                  )
+                }
+                sx={{ mt: 0.5 }}
+              >
+                <Delete />
+              </IconButton>
+              <Stack spacing={2} flex={1}>
+                <TextField
+                  fullWidth
+                  label="Subtitle *"
+                  value={part.subtitle}
+                  onChange={(e) =>
+                    handleSubtitleChange(e.target.value, "movie", i)
+                  }
+                  size="small"
+                />
+                <MediaUpload
+                  type="media"
+                  value={part}
+                  onUpload={(data) =>
+                    handleUpload(
+                      { ...data, subtitle: part.subtitle },
+                      "movie",
+                      i
+                    )
+                  }
+                  onDelete={() =>
+                    handleRemove(
+                      part.public_id,
+                      part.resourceType,
+                      "movie",
+                      i,
+                      null
+                    )
+                  }
+                />
+              </Stack>
+            </Stack>
+          )
+        )}
 
       {type === "movie" && (
         <Button variant="outlined" onClick={addMoviePart} startIcon={<Add />}>
@@ -225,53 +230,23 @@ const ShowUpload = () => {
       )}
 
       {type === "webseries" &&
-        webseriesSeasons.map((season, sIdx) => (
-          <Box key={season.season} className="border rounded p-4">
-            <Typography variant="subtitle1" className="font-semibold mb-2">
+        (webseriesSeasons.length
+          ? webseriesSeasons
+          : [{ season: 1, episodes: [createEmptyPart()] }]
+        ).map((season, sIdx) => (
+          <Box key={season.season || sIdx} className="border rounded p-4">
+            <Typography variant="subtitle1" fontWeight={600} mb={2}>
               Season {season.season}
             </Typography>
             {season.episodes.map((ep, eIdx) => (
-              <Box
-                key={ep.id}
-                className="border p-3 rounded mb-4 relative space-y-2"
+              <Stack
+                key={ep.id || eIdx}
+                direction="row"
+                spacing={2}
+                alignItems="flex-start"
+                className="border p-3 rounded mb-4"
               >
-                <TextField
-                  fullWidth
-                  label={`Episode ${eIdx + 1} Subtitle *`}
-                  value={ep.subtitle}
-                  onChange={(e) =>
-                    handleSubtitleChange(
-                      e.target.value,
-                      "webseries",
-                      sIdx,
-                      eIdx
-                    )
-                  }
-                  size="small"
-                />
-                <MediaUpload
-                  type="media"
-                  value={ep}
-                  onUpload={(data) =>
-                    handleUpload(
-                      { ...data, subtitle: ep.subtitle },
-                      "webseries",
-                      sIdx,
-                      eIdx
-                    )
-                  }
-                  onDelete={() =>
-                    handleRemove(
-                      ep.public_id,
-                      ep.resourceType,
-                      "webseries",
-                      sIdx,
-                      eIdx
-                    )
-                  }
-                />
                 <IconButton
-                  className="absolute top-2 right-2"
                   onClick={() =>
                     handleRemove(
                       ep.public_id,
@@ -281,10 +256,48 @@ const ShowUpload = () => {
                       eIdx
                     )
                   }
+                  sx={{ mt: 0.5 }}
                 >
                   <Delete />
                 </IconButton>
-              </Box>
+                <Stack spacing={2} flex={1}>
+                  <TextField
+                    fullWidth
+                    label={`Episode ${eIdx + 1} Subtitle *`}
+                    value={ep.subtitle}
+                    onChange={(e) =>
+                      handleSubtitleChange(
+                        e.target.value,
+                        "webseries",
+                        sIdx,
+                        eIdx
+                      )
+                    }
+                    size="small"
+                  />
+                  <MediaUpload
+                    type="media"
+                    value={ep}
+                    onUpload={(data) =>
+                      handleUpload(
+                        { ...data, subtitle: ep.subtitle },
+                        "webseries",
+                        sIdx,
+                        eIdx
+                      )
+                    }
+                    onDelete={() =>
+                      handleRemove(
+                        ep.public_id,
+                        ep.resourceType,
+                        "webseries",
+                        sIdx,
+                        eIdx
+                      )
+                    }
+                  />
+                </Stack>
+              </Stack>
             ))}
             <Button
               size="small"
@@ -297,18 +310,7 @@ const ShowUpload = () => {
           </Box>
         ))}
 
-      {type === "webseries" && (
-        <Button
-          className="mt-2"
-          variant="outlined"
-          onClick={addSeason}
-          startIcon={<Add />}
-        >
-          Add Season
-        </Button>
-      )}
-
-      <Divider className="my-4" />
+      <Divider />
       <Button variant="text" color="error" onClick={handleClearAll}>
         Cancel All Uploads
       </Button>

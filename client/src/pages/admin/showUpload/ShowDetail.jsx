@@ -1,8 +1,14 @@
-import React from "react";
-import { Box, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Stack,
+  Card,
+  CardActionArea,
+} from "@mui/material";
 import MediaUpload from "../../../component/admin/MediaUpload";
 import { useDispatch, useSelector } from "react-redux";
-import { setShowDetails } from "../../../store/show/showSlice"; // your slice
+import { setShowDetails } from "../../../store/show/showSlice";
 
 const ShowDetails = () => {
   const dispatch = useDispatch();
@@ -20,48 +26,32 @@ const ShowDetails = () => {
   };
 
   return (
-    <Box className="space-y-6 mt-6">
-      <Typography variant="h6" className="font-semibold">
-        Choose Show Type *
-      </Typography>
-      <Box className="flex gap-6">
-        {["movie", "webseries"].map((opt) => (
-          <Box
-            key={opt}
-            onClick={() =>
-              dispatch(setShowDetails({ name: "type", value: opt }))
-            }
-            className={`cursor-pointer px-6 py-4 rounded-lg border-2 shadow-sm transition-all w-40 text-center ${
-              type === opt
-                ? "border-blue-500 bg-lime-900"
-                : "border-gray-300 bg-lime-700"
-            }`}
-          >
-            <Typography variant="body1" className="capitalize">
-              {opt}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-
+    <Stack spacing={3} mt={4}>
+      {/* Title */}
       <TextField
         label="Main Title"
         name="title"
         value={title}
         onChange={handleChange}
+        required
         fullWidth
         size="small"
       />
+
+      {/* Description */}
       <TextField
         label="Description"
         name="description"
         value={description}
         onChange={handleChange}
+        required
         fullWidth
         multiline
         rows={3}
         size="small"
       />
+
+      {/* Release Date */}
       <TextField
         label="Release Date"
         name="releaseDate"
@@ -69,12 +59,49 @@ const ShowDetails = () => {
         InputLabelProps={{ shrink: true }}
         value={releaseDate}
         onChange={handleChange}
+        required
         fullWidth
         size="small"
       />
-      <div>
-        <Typography className="mb-2 font-medium text-gray-600">
-          Upload Poster
+      {/* Show Type Selector */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Choose Show Type *
+        </Typography>
+        <Box display="flex" gap={2}>
+          {["movie", "webseries"].map((opt) => (
+            <Card
+              key={opt}
+              variant="outlined"
+              sx={{
+                borderColor: type === opt ? "primary.main" : "grey.400",
+                flex: "1 1 0",
+              }}
+            >
+              <CardActionArea
+                onClick={() =>
+                  dispatch(setShowDetails({ name: "type", value: opt }))
+                }
+                sx={{ p: 2 }}
+              >
+                <Typography
+                  align="center"
+                  variant="body1"
+                  fontWeight="medium"
+                  textTransform="capitalize"
+                >
+                  {opt}
+                </Typography>
+              </CardActionArea>
+            </Card>
+          ))}
+        </Box>
+      </Box>
+
+      {/* Poster Upload */}
+      <Box>
+        <Typography variant="subtitle1" gutterBottom>
+          Upload Poster *
         </Typography>
         <MediaUpload
           type="poster"
@@ -82,16 +109,8 @@ const ShowDetails = () => {
           onUpload={(data) => handlePosterUpload(data.url)}
           onDelete={() => handlePosterUpload("")}
         />
-
-        {posterUrl && (
-          <img
-            src={posterUrl}
-            alt="poster"
-            className="mt-3 max-h-48 rounded shadow"
-          />
-        )}
-      </div>
-    </Box>
+      </Box>
+    </Stack>
   );
 };
 

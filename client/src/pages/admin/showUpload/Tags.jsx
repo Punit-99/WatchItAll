@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { genres, languages } from "../../../utils/showFields";
+import { genres, languages } from "../../../config/showFields";
 import { Chip, Box, Typography } from "@mui/material";
 import { setGenres, setLanguages } from "../../../store/show/showSlice";
 
