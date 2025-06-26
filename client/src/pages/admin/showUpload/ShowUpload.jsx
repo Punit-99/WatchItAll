@@ -13,9 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuid } from "uuid";
 import MediaUpload from "../../../component/admin/MediaUpload";
 import {
-  clearAllUploads,
-  addUpload,
-  removeUpload,
   setMovieParts,
   setWebseriesSeasons,
 } from "../../../store/show/showSlice";
@@ -43,7 +40,6 @@ const ShowUpload = () => {
         i === sIdx ? { ...part, ...fileData } : part
       );
       dispatch(setMovieParts(updated));
-      dispatch(addUpload(fileData));
     } else {
       const updatedSeasons = webseriesSeasons.map((season, i) => {
         if (i !== sIdx) return season;
@@ -52,47 +48,33 @@ const ShowUpload = () => {
         );
         return { ...season, episodes: updatedEpisodes };
       });
-
       dispatch(setWebseriesSeasons(updatedSeasons));
-      dispatch(
-        addUpload({
-          season: webseriesSeasons[sIdx].season,
-          episodes: updatedSeasons[sIdx].episodes,
-        })
-      );
     }
   };
 
   const handleRemove = (public_id, resourceType, type, sIdx, eIdx) => {
     dispatch(deleteFile({ public_id, file_type: resourceType }));
-    dispatch(removeUpload(public_id));
 
     if (type === "movie") {
-      const updated = movieParts.filter((_, i) => i !== sIdx);
-      dispatch(setMovieParts(updated.length ? updated : [createEmptyPart()]));
-    } else {
-      const updatedSeasons = webseriesSeasons
-        .map((season, index) => {
-          if (index !== sIdx) return season;
-          const newEpisodes = season.episodes.filter((_, i) => i !== eIdx);
-          return newEpisodes.length > 0
-            ? { ...season, episodes: newEpisodes }
-            : null;
-        })
-        .filter(Boolean);
-
-      dispatch(
-        setWebseriesSeasons(
-          updatedSeasons.length
-            ? updatedSeasons
-            : [{ season: 1, episodes: [createEmptyPart()] }]
-        )
+      const updated = movieParts.map((part, i) =>
+        i === sIdx
+          ? { ...part, url: "", public_id: "", resourceType: "" }
+          : part
       );
+      dispatch(setMovieParts(updated));
+    } else {
+      const updatedSeasons = webseriesSeasons.map((season, i) => {
+        if (i !== sIdx) return season;
+        const updatedEpisodes = season.episodes.map((ep, j) =>
+          j === eIdx ? { ...ep, url: "", public_id: "", resourceType: "" } : ep
+        );
+        return { ...season, episodes: updatedEpisodes };
+      });
+      dispatch(setWebseriesSeasons(updatedSeasons));
     }
   };
 
   const handleClearAll = () => {
-    dispatch(clearAllUploads());
     dispatch(resetUpload());
     dispatch(setMovieParts([createEmptyPart()]));
     dispatch(

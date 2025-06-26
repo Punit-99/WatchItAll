@@ -1,46 +1,33 @@
-import React from "react";
 import { Button, CircularProgress, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { CloudUpload, Delete } from "@mui/icons-material";
 
-// Poster Slice
-import {
-  uploadPoster,
-  deletePoster,
-  resetPoster,
-} from "../../store/show/posterUploadSlice";
-
-// Media Slice
+// Media Slice only
 import {
   uploadMediaFile,
   deleteMediaFile,
-  clearAllMediaUploads,
 } from "../../store/show/mediaUploadSlice";
 
-const MediaUpload = ({ onUpload, onDelete, value = {}, type = "poster" }) => {
+const MediaUpload = ({ onUpload, onDelete, value = {} }) => {
   const dispatch = useDispatch();
-
   const { url, public_id, resourceType } = value;
-  const loading = useSelector((state) =>
-    type === "poster" ? state.posterUpload.loading : state.mediaUpload.loading
-  );
+
+  const loading = useSelector((state) => state.mediaUpload.loading);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const thunk = type === "poster" ? uploadPoster : uploadMediaFile;
-    dispatch(thunk(file)).then((res) => {
+    dispatch(uploadMediaFile(file)).then((res) => {
       if (res.payload?.url) {
-        onUpload?.(res.payload); // Update parent state
+        onUpload?.(res.payload); // Notify parent
       }
     });
   };
 
   const handleDelete = () => {
-    const thunk = type === "poster" ? deletePoster : deleteMediaFile;
-    dispatch(thunk({ public_id, resourceType }));
-    onDelete?.(public_id); // Optional: remove from parent
+    dispatch(deleteMediaFile({ public_id, resourceType }));
+    onDelete?.(public_id);
   };
 
   return (
@@ -61,7 +48,7 @@ const MediaUpload = ({ onUpload, onDelete, value = {}, type = "poster" }) => {
       ) : (
         <>
           <Typography className="text-sm text-green-600">
-            Uploaded successfully
+            ✅ Uploaded
           </Typography>
           {resourceType === "image" && (
             <img src={url} alt="upload preview" className="max-h-40 rounded" />
@@ -81,3 +68,6 @@ const MediaUpload = ({ onUpload, onDelete, value = {}, type = "poster" }) => {
 };
 
 export default MediaUpload;
+
+// compoent to upload media and delete media
+// it can be used to delete all the media at once when user canclke the operation

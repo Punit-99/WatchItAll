@@ -109,10 +109,10 @@ const NewShow = () => {
   };
 
   const handleNext = () => {
-    const isValid = validateStep(activeStep);
-    if (!isValid) return;
+    // const isValid = validateStep(activeStep);
+    // if (!isValid) return;
 
-    setErrors([]);
+    // setErrors([]);
 
     if (activeStep < steps.length - 1) {
       setActiveStep((prev) => prev + 1);

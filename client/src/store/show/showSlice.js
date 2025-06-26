@@ -12,7 +12,7 @@ const initialState = {
   releaseDate: "",
   genres: [],
   languages: [],
-  uploads: [], // [{ subtitle, url, public_id, resourceType }]
+
   movieParts: [],
   webseriesSeasons: [],
 };
@@ -31,18 +31,7 @@ const showSlice = createSlice({
     setLanguages: (state, action) => {
       state.languages = action.payload;
     },
-    addUpload: (state, action) => {
-      state.uploads.push(action.payload);
-    },
-    removeUpload: (state, action) => {
-      const publicIdToRemove = action.payload;
-      state.uploads = state.uploads.filter(
-        (u) => u.public_id !== publicIdToRemove
-      );
-    },
-    clearAllUploads: (state) => {
-      state.uploads = [];
-    },
+
     resetShowForm: () => initialState,
     setMovieParts: (state, action) => {
       state.movieParts = action.payload;

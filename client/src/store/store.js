@@ -12,7 +12,7 @@ const store = configureStore({
     sidebar: sidebarReducer,
     upload: uploadFileReducer,
     show: showReducer,
-    posterUpload: posterUploadReducer,
+    // posterUpload: posterUploadReducer,
     mediaUpload: mediaUploadReducer,
   },
 });
