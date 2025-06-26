@@ -1,8 +1,13 @@
-import { Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { CloudUpload, Delete } from "@mui/icons-material";
-
-// Media Slice only
 import {
   uploadMediaFile,
   deleteMediaFile,
@@ -11,7 +16,6 @@ import {
 const MediaUpload = ({ onUpload, onDelete, value = {} }) => {
   const dispatch = useDispatch();
   const { url, public_id, resourceType } = value;
-
   const loading = useSelector((state) => state.mediaUpload.loading);
 
   const handleFileChange = (e) => {
@@ -20,7 +24,7 @@ const MediaUpload = ({ onUpload, onDelete, value = {} }) => {
 
     dispatch(uploadMediaFile(file)).then((res) => {
       if (res.payload?.url) {
-        onUpload?.(res.payload); // Notify parent
+        onUpload?.(res.payload);
       }
     });
   };
@@ -31,39 +35,87 @@ const MediaUpload = ({ onUpload, onDelete, value = {} }) => {
   };
 
   return (
-    <div className="space-y-2">
-      {!url ? (
-        <>
-          <Button
-            variant="outlined"
-            component="label"
-            startIcon={<CloudUpload />}
-            disabled={loading}
-          >
-            {loading ? "Uploading..." : "Choose File"}
-            <input type="file" hidden onChange={handleFileChange} />
-          </Button>
-          {loading && <CircularProgress size={24} />}
-        </>
-      ) : (
-        <>
-          <Typography className="text-sm text-green-600">
-            ✅ Uploaded
-          </Typography>
-          {resourceType === "image" && (
-            <img src={url} alt="upload preview" className="max-h-40 rounded" />
-          )}
-          <Button
-            variant="text"
-            color="error"
-            startIcon={<Delete />}
-            onClick={handleDelete}
-          >
-            Delete
-          </Button>
-        </>
+    <Box>
+      {!url && !loading && (
+        <Button
+          variant="outlined"
+          component="label"
+          startIcon={<CloudUpload />}
+        >
+          Choose File
+          <input type="file" hidden onChange={handleFileChange} />
+        </Button>
       )}
-    </div>
+
+      {loading && (
+        <Box
+          sx={{
+            border: "2px dashed #aaa",
+            borderRadius: 2,
+            padding: 2,
+            textAlign: "center",
+            position: "relative",
+          }}
+        >
+          <Skeleton variant="rectangular" width="100%" height={180} />
+          <CircularProgress
+            size={32}
+            sx={{
+              position: "absolute",
+              top: "calc(50% - 16px)",
+              left: "calc(50% - 16px)",
+            }}
+          />
+          <Typography variant="body2" mt={2}>
+            Uploading...
+          </Typography>
+        </Box>
+      )}
+
+      {url && (
+        <Box
+          sx={{
+            border: "2px dashed #4caf50",
+            borderRadius: 2,
+            position: "relative",
+            overflow: "hidden",
+            mt: 1,
+            maxHeight: 240,
+          }}
+        >
+          <IconButton
+            onClick={handleDelete}
+            sx={{
+              position: "absolute",
+              top: 6,
+              right: 6,
+              bgcolor: "rgba(0,0,0,0.6)",
+              color: "white",
+              "&:hover": { bgcolor: "rgba(255,0,0,0.8)" },
+              zIndex: 1,
+            }}
+          >
+            <Delete fontSize="small" />
+          </IconButton>
+
+          {resourceType === "image" ? (
+            <img
+              src={url}
+              alt="Upload Preview"
+              style={{ width: "100%", display: "block", borderRadius: 8 }}
+            />
+          ) : resourceType === "video" ? (
+            <video
+              src={url}
+              controls
+              style={{ width: "100%", display: "block", borderRadius: 8 }}
+            />
+          ) : (
+            <Typography sx={{ p: 2 }}>Unsupported format</Typography>
+          )}
+        </Box>
+      )}
+    </Box>
   );
 };
 

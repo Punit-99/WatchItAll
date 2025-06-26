@@ -200,11 +200,6 @@ const ShowUpload = () => {
                     )
                   }
                 />
-                {part.url && (
-                  <Typography variant="caption" color="success.main">
-                    ✅ Uploaded
-                  </Typography>
-                )}
               </Stack>
             </Stack>
           )
@@ -283,11 +278,6 @@ const ShowUpload = () => {
                       )
                     }
                   />
-                  {ep.url && (
-                    <Typography variant="caption" color="success.main">
-                      ✅ Uploaded
-                    </Typography>
-                  )}
                 </Stack>
               </Stack>
             ))}
