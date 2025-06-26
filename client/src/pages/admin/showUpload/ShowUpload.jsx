@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Button,
@@ -8,7 +7,7 @@ import {
   Divider,
   Stack,
 } from "@mui/material";
-import { Add, Delete } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuid } from "uuid";
 import MediaUpload from "../../../component/admin/MediaUpload";
@@ -17,6 +16,12 @@ import {
   setWebseriesSeasons,
 } from "../../../store/show/showSlice";
 import { deleteFile, resetUpload } from "../../../store/upload/fileUploadSlice";
+import {
+  addMediaUpload,
+  clearAllMediaUploads,
+  removeMediaUpload,
+} from "../../../store/show/mediaUploadSlice";
+import FolderDeleteRoundedIcon from "@mui/icons-material/FolderDeleteRounded";
 
 const ShowUpload = () => {
   const dispatch = useDispatch();
@@ -52,25 +57,58 @@ const ShowUpload = () => {
     }
   };
 
-  const handleRemove = (public_id, resourceType, type, sIdx, eIdx) => {
+  const handleRemove = (
+    public_id,
+    resourceType,
+    type,
+    sIdx,
+    eIdx,
+    deleteBlock = false
+  ) => {
     dispatch(deleteFile({ public_id, file_type: resourceType }));
+    dispatch(removeMediaUpload(public_id));
 
     if (type === "movie") {
-      const updated = movieParts.map((part, i) =>
-        i === sIdx
-          ? { ...part, url: "", public_id: "", resourceType: "" }
-          : part
-      );
-      dispatch(setMovieParts(updated));
-    } else {
-      const updatedSeasons = webseriesSeasons.map((season, i) => {
-        if (i !== sIdx) return season;
-        const updatedEpisodes = season.episodes.map((ep, j) =>
-          j === eIdx ? { ...ep, url: "", public_id: "", resourceType: "" } : ep
+      if (deleteBlock) {
+        const updated = movieParts.filter((_, i) => i !== sIdx);
+        dispatch(setMovieParts(updated.length ? updated : [createEmptyPart()]));
+      } else {
+        const updated = movieParts.map((part, i) =>
+          i === sIdx
+            ? { ...part, url: "", public_id: "", resourceType: "" }
+            : part
         );
-        return { ...season, episodes: updatedEpisodes };
-      });
-      dispatch(setWebseriesSeasons(updatedSeasons));
+        dispatch(setMovieParts(updated));
+      }
+    } else {
+      if (deleteBlock) {
+        const updatedSeasons = webseriesSeasons
+          .map((season, i) => {
+            if (i !== sIdx) return season;
+            const newEpisodes = season.episodes.filter((_, j) => j !== eIdx);
+            return { ...season, episodes: newEpisodes };
+          })
+          .filter((s) => s.episodes.length > 0);
+
+        dispatch(
+          setWebseriesSeasons(
+            updatedSeasons.length
+              ? updatedSeasons
+              : [{ season: 1, episodes: [createEmptyPart()] }]
+          )
+        );
+      } else {
+        const updated = webseriesSeasons.map((season, i) => {
+          if (i !== sIdx) return season;
+          const updatedEpisodes = season.episodes.map((ep, j) =>
+            j === eIdx
+              ? { ...ep, url: "", public_id: "", resourceType: "" }
+              : ep
+          );
+          return { ...season, episodes: updatedEpisodes };
+        });
+        dispatch(setWebseriesSeasons(updated));
+      }
     }
   };
 
@@ -146,6 +184,7 @@ const ShowUpload = () => {
         </Box>
       )}
 
+      {/* Movie */}
       {type === "movie" &&
         (movieParts.length ? movieParts : [createEmptyPart()]).map(
           (part, i) => (
@@ -163,13 +202,15 @@ const ShowUpload = () => {
                     part.resourceType,
                     "movie",
                     i,
-                    null
+                    null,
+                    true // deleteBlock = true
                   )
                 }
                 sx={{ mt: 0.5 }}
               >
-                <Delete />
+                <FolderDeleteRoundedIcon />
               </IconButton>
+
               <Stack spacing={1.5} flex={1}>
                 <TextField
                   fullWidth
@@ -211,6 +252,7 @@ const ShowUpload = () => {
         </Button>
       )}
 
+      {/* Websires */}
       {type === "webseries" &&
         (webseriesSeasons.length
           ? webseriesSeasons
@@ -235,13 +277,15 @@ const ShowUpload = () => {
                       ep.resourceType,
                       "webseries",
                       sIdx,
-                      eIdx
+                      eIdx,
+                      true // deleteBlock = true
                     )
                   }
                   sx={{ mt: 0.5 }}
                 >
-                  <Delete />
+                  <FolderDeleteRoundedIcon />
                 </IconButton>
+
                 <Stack spacing={1.5} flex={1}>
                   <TextField
                     fullWidth
