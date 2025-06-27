@@ -17,8 +17,8 @@ import {
 } from "../../../store/show/showSlice";
 import { deleteFile, resetUpload } from "../../../store/upload/fileUploadSlice";
 import {
-  addMediaUpload,
   clearAllMediaUploads,
+  deleteMediaFile,
   removeMediaUpload,
 } from "../../../store/show/mediaUploadSlice";
 import FolderDeleteRoundedIcon from "@mui/icons-material/FolderDeleteRounded";
@@ -28,6 +28,7 @@ const ShowUpload = () => {
   const { type, movieParts, webseriesSeasons } = useSelector(
     (state) => state.show
   );
+  const uploads = useSelector((state) => state.mediaUpload.uploads);
 
   const createEmptyPart = () => ({
     id: uuid(),
@@ -113,6 +114,18 @@ const ShowUpload = () => {
   };
 
   const handleClearAll = () => {
+    console.log("Clear All Clicked");
+
+    if (!window.confirm("Are you sure you want to cancel all uploads?")) return;
+
+    console.log("Uploads in Clear All:", uploads);
+
+    uploads.forEach(({ public_id, resourceType }) => {
+      console.log("Deleting upload:", public_id, resourceType);
+      dispatch(deleteMediaFile({ public_id, resourceType }));
+    });
+
+    dispatch(clearAllMediaUploads());
     dispatch(resetUpload());
     dispatch(setMovieParts([createEmptyPart()]));
     dispatch(
@@ -338,7 +351,7 @@ const ShowUpload = () => {
 
       <Divider />
       <Button variant="text" color="error" onClick={handleClearAll}>
-        Cancel All Uploads
+        Remove All Uploads
       </Button>
     </Box>
   );

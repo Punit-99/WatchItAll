@@ -1,3 +1,4 @@
+import { Upload } from "@mui/icons-material";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -22,6 +23,7 @@ export const uploadMediaFile = createAsyncThunk(
 export const deleteMediaFile = createAsyncThunk(
   "media/delete",
   async ({ public_id, resourceType }) => {
+    console.log("Delete Media Slice Called");
     await axios.post(`${BASE_URL}/delete-file`, {
       public_id,
       file_type: resourceType,
@@ -37,9 +39,12 @@ const mediaUploadSlice = createSlice({
     loading: false,
     error: null,
   },
+
   reducers: {
     addMediaUpload: (state, action) => {
       state.uploads.push(action.payload);
+      console.log(state.uploads);
+      console.log("Media Added");
     },
     removeMediaUpload: (state, action) => {
       const publicId = action.payload;
@@ -58,7 +63,7 @@ const mediaUploadSlice = createSlice({
       })
       .addCase(uploadMediaFile.fulfilled, (state, action) => {
         state.loading = false;
-        // Expecting caller to dispatch addMediaUpload manually with full object incl. subtitle
+        state.uploads.push(action.payload); // Automatically track it
       })
       .addCase(uploadMediaFile.rejected, (state, action) => {
         state.loading = false;
