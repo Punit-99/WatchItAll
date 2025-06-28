@@ -15,7 +15,6 @@ import {
   setMovieParts,
   setWebseriesSeasons,
 } from "../../../store/show/showSlice";
-import { deleteFile, resetUpload } from "../../../store/upload/fileUploadSlice";
 import {
   clearAllMediaUploads,
   deleteMediaFile,
@@ -66,7 +65,7 @@ const ShowUpload = () => {
     eIdx,
     deleteBlock = false
   ) => {
-    dispatch(deleteFile({ public_id, file_type: resourceType }));
+    dispatch(deleteMediaFile({ public_id, file_type: resourceType }));
     dispatch(removeMediaUpload(public_id));
 
     if (type === "movie") {
@@ -126,7 +125,6 @@ const ShowUpload = () => {
     });
 
     dispatch(clearAllMediaUploads());
-    dispatch(resetUpload());
     dispatch(setMovieParts([createEmptyPart()]));
     dispatch(
       setWebseriesSeasons([{ season: 1, episodes: [createEmptyPart()] }])
