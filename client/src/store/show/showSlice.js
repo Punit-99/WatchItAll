@@ -30,8 +30,8 @@ const showSlice = createSlice({
     setLanguages: (state, action) => {
       state.languages = action.payload;
     },
-
     resetShowForm: () => initialState,
+
     setMovieParts: (state, action) => {
       state.movieParts = action.payload;
     },
@@ -45,12 +45,10 @@ export const {
   setShowDetails,
   setGenres,
   setLanguages,
-  addUpload,
-  removeUpload,
-  clearAllUploads,
   resetShowForm,
   setMovieParts,
   setWebseriesSeasons,
+  resetPosterUpload, // <-- NEW
 } = showSlice.actions;
 
 export default showSlice.reducer;
