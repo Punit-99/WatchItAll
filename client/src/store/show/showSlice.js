@@ -48,7 +48,6 @@ export const {
   resetShowForm,
   setMovieParts,
   setWebseriesSeasons,
-  resetPosterUpload, // <-- NEW
 } = showSlice.actions;
 
 export default showSlice.reducer;
