@@ -1,18 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  type: "movie", // or 'webseries'
   title: "",
   description: "",
+  releaseDate: "",
+  type: "movie", // or 'webseries'
   poster: {
     url: "",
     public_id: "",
     resourceType: "",
   },
-  releaseDate: "",
   genres: [],
   languages: [],
-
   movieParts: [],
   webseriesSeasons: [],
 };

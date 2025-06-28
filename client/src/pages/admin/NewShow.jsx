@@ -14,8 +14,9 @@ import ShowDetails from "./showUpload/ShowDetail";
 import Tags from "./showUpload/Tags";
 import ShowUpload from "./showUpload/ShowUpload";
 import { useSelector } from "react-redux";
+import Preview from "./showUpload/Preview";
 
-const steps = ["Type & Details", "Tags", "Upload"];
+const steps = ["Type & Details", "Tags", "Upload", "Preview"];
 
 const NewShow = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -134,6 +135,8 @@ const NewShow = () => {
         return <Tags />;
       case 2:
         return <ShowUpload />;
+      case 3:
+        return <Preview />;
       default:
         return null;
     }
