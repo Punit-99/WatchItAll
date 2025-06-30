@@ -9,6 +9,7 @@ import Shows from "./pages/admin/Shows";
 import Home from "./pages/home/Home";
 import NewShow from "./pages/admin/NewShow";
 import Users from "./pages/admin/User";
+import NotFound from "./pages/notFound/NotFound";
 
 function App() {
   return (
@@ -22,8 +23,8 @@ function App() {
           <Route path="shows" element={<Shows />} />
           <Route path="new-show" element={<NewShow />} />
           <Route path="users" element={<Users />} />
-          {/* <Route element={}/> */}
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );
