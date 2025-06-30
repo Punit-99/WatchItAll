@@ -15,9 +15,9 @@ function App() {
     <>
       <Routes>
         {/* Home page */}
-        {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/" element={<Home />} />
         {/* Admin Page */}
-        <Route path="/" element={<AdminLayout />}>
+        <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminHome />} />
           <Route path="shows" element={<Shows />} />
           <Route path="new-show" element={<NewShow />} />

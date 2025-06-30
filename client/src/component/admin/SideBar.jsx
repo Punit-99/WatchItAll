@@ -29,10 +29,10 @@ import { Link, useLocation } from "react-router-dom";
 const drawerWidth = 240;
 
 const sidebarMenuItem = [
-  { name: "Home", icon: <HomeRoundedIcon />, path: "/" },
-  { name: "Shows", icon: <AcUnitRoundedIcon />, path: "/shows" },
-  { name: "Create Show", icon: <AcUnitRoundedIcon />, path: "/new-show" },
-  { name: "Users", icon: <AcUnitRoundedIcon />, path: "/users" },
+  { name: "Home", icon: <HomeRoundedIcon />, path: "/admin" },
+  { name: "Shows", icon: <AcUnitRoundedIcon />, path: "/admin/shows" },
+  { name: "Create Show", icon: <AcUnitRoundedIcon />, path: "/admin/new-show" },
+  { name: "Users", icon: <AcUnitRoundedIcon />, path: "/admin/users" },
 ];
 
 const SideBar = ({ setActivePage }) => {
