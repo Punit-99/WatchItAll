@@ -24,9 +24,8 @@ const showSchema = new mongoose.Schema(
     description: String,
     genres: [String],
     releaseDate: Date,
-    language: String,
-    thumbnailUrl: String,
-    bannerUrl: String,
+    language: [String],
+    poster: String,
     parts: [partSchema], // For movie type
     seasons: [seasonSchema], // For webseries type
   },

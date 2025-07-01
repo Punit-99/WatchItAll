@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Box,
   Paper,
-  Typography,
   Button,
   Stepper,
   Step,
@@ -13,8 +12,10 @@ import {
 import ShowDetails from "./showUpload/ShowDetail";
 import Tags from "./showUpload/Tags";
 import ShowUpload from "./showUpload/ShowUpload";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Preview from "./showUpload/Preview";
+import { submitShow } from "../../store/showApi/showApiSlice";
+import { showSnackbar } from "../../store/toast/snackbarSlice";
 
 const steps = ["Type & Details", "Tags", "Upload", "Preview"];
 
@@ -24,7 +25,7 @@ const NewShow = () => {
   const show = useSelector((state) => state.show);
 
   const isValidURL = (url) => typeof url === "string" && url.startsWith("http");
-
+  const dispatch = useDispatch();
   const validateStep = (step) => {
     const newErrors = [];
 
@@ -118,6 +119,12 @@ const NewShow = () => {
     if (activeStep < steps.length - 1) {
       setActiveStep((prev) => prev + 1);
     } else {
+      dispatch(submitShow(show)).then(() => {
+        dispatch(
+          showSnackbar({ message: "Show uploaded!", severity: "success" })
+        );
+      });
+
       console.log("Final Show JSON:", show);
     }
   };

@@ -1,4 +1,4 @@
-import { cloudinary } from "../../utils/cloudinaryConfig.js";
+import { cloudinary } from "../../../utils/cloudinaryConfig.js";
 
 export const handleFileUpload = async (req, res) => {
   try {
