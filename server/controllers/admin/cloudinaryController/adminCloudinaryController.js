@@ -1,5 +1,6 @@
 import { cloudinary } from "../../../utils/cloudinaryConfig.js";
 
+// handle asset upload to cloudinary
 export const handleFileUpload = async (req, res) => {
   try {
     if (!req.file) {
@@ -27,6 +28,7 @@ export const handleFileUpload = async (req, res) => {
   }
 };
 
+// handle asset delete to cloudinary
 export const handleDeleteUpload = async (req, res) => {
   try {
     const { public_id, resourceType } = req.body;

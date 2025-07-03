@@ -1,6 +1,6 @@
 import Show from "../../../models/Shows.js";
 
-// Create a new Show (movie or webseries)
+// upload a new Show to DB
 export const createShows = async (req, res) => {
   try {
     const {
@@ -28,7 +28,7 @@ export const createShows = async (req, res) => {
       description,
       genres,
       releaseDate,
-      language: languages?.join(", "), // save as a comma string or adjust as needed
+      languages: languages,
       poster: poster?.url || "",
       parts:
         type === "movie"
