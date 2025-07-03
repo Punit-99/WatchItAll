@@ -90,10 +90,6 @@ export const getTheme = (mode = "light") => {
             color: selectedTheme.icon.default,
             fill: selectedTheme.icon.default,
             fontSize: "1.2rem",
-            // ".Mui-selected &": {
-            //   color: selectedTheme.icon.onSelect,
-            //   fill: selectedTheme.icon.onSelect,
-            // },
           },
         },
       },
@@ -131,12 +127,6 @@ export const getTheme = (mode = "light") => {
             height: "1rem",
             marginRight: common.sideMenu.gap,
             color: selectedTheme.icon.default,
-
-            // Add selected styles here
-            ".Mui-selected &": {
-              // <-- this is the key selector
-              color: selectedTheme.icon.onSelect,
-            },
           },
         },
       },
@@ -144,10 +134,10 @@ export const getTheme = (mode = "light") => {
         styleOverrides: {
           root: {
             "& .MuiTypography-root": {
-              fontWeight: 400, // default
+              fontWeight: 400,
             },
             ".Mui-selected & .MuiTypography-root": {
-              fontWeight: 500, // when ListItemButton selected
+              fontWeight: 500,
             },
           },
         },
