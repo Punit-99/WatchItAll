@@ -16,11 +16,11 @@ import {
   ListItemButton,
   useTheme,
 } from "@mui/material";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import AcUnitRoundedIcon from "@mui/icons-material/AcUnitRounded";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import MovieOutlinedIcon from "@mui/icons-material/MovieOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-
+import AddToQueueOutlinedIcon from "@mui/icons-material/AddToQueueOutlined";
+import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import { closeSidebar } from "../../store/navbar/navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
@@ -29,10 +29,14 @@ import { Link, useLocation } from "react-router-dom";
 const drawerWidth = 240;
 
 const sidebarMenuItem = [
-  { name: "Home", icon: <HomeRoundedIcon />, path: "/admin" },
-  { name: "Shows", icon: <AcUnitRoundedIcon />, path: "/admin/shows" },
-  { name: "Create Show", icon: <AcUnitRoundedIcon />, path: "/admin/new-show" },
-  { name: "Users", icon: <AcUnitRoundedIcon />, path: "/admin/users" },
+  { name: "Home", icon: <DashboardOutlinedIcon />, path: "/admin" },
+  { name: "Shows", icon: <MovieOutlinedIcon />, path: "/admin/shows" },
+  {
+    name: "Create Show",
+    icon: <AddToQueueOutlinedIcon />,
+    path: "/admin/new-show",
+  },
+  { name: "Users", icon: <PersonOutlinedIcon />, path: "/admin/users" },
 ];
 
 const SideBar = ({ setActivePage }) => {
